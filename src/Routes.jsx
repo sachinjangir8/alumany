@@ -1,17 +1,19 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes as RouterRoutes, Route, Navigate } from "react-router-dom";
 import ScrollToTop from "components/ScrollToTop";
 import ErrorBoundary from "components/ErrorBoundary";
 import ProtectedRoute from "components/ProtectedRoute";
-import NotFound from "pages/NotFound";
-import AlumniProfile from './pages/alumni-profile';
-import AlumniDirectory from './pages/alumni-directory';
-import Login from './pages/login';
-import AlumniDashboard from './pages/alumni-dashboard';
-import CareerBoard from './pages/career-board';
-import EventsManagement from './pages/events-management';
-import Messages from './pages/messages';
 import { useAuth } from './contexts/AuthContext';
+import SplashScreen from "components/SplashScreen";
+
+const NotFound = lazy(() => import("pages/NotFound"));
+const AlumniProfile = lazy(() => import('./pages/alumni-profile'));
+const AlumniDirectory = lazy(() => import('./pages/alumni-directory'));
+const Login = lazy(() => import('./pages/login'));
+const AlumniDashboard = lazy(() => import('./pages/alumni-dashboard'));
+const CareerBoard = lazy(() => import('./pages/career-board'));
+const EventsManagement = lazy(() => import('./pages/events-management'));
+const Messages = lazy(() => import('./pages/messages'));
 
 const Routes = () => {
   const { user } = useAuth();
@@ -20,6 +22,7 @@ const Routes = () => {
     <BrowserRouter>
       <ErrorBoundary>
       <ScrollToTop />
+      <Suspense fallback={<SplashScreen message="Loading..." />}> 
       <RouterRoutes>
         {/* Public routes */}
         <Route 
@@ -88,6 +91,7 @@ const Routes = () => {
         {/* Catch all route */}
         <Route path="*" element={<NotFound />} />
       </RouterRoutes>
+      </Suspense>
       </ErrorBoundary>
     </BrowserRouter>
   );
