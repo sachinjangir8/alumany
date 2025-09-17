@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import Header from '../../components/ui/Header';
 import Icon from '../../components/AppIcon';
@@ -13,6 +14,7 @@ import { eventsService, handleSupabaseError } from '../../utils/supabaseService'
 
 const EventsManagement = () => {
   const { user, userProfile } = useAuth();
+  const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [showAttendeeModal, setShowAttendeeModal] = useState(false);
   const [viewMode, setViewMode] = useState('calendar');
@@ -27,9 +29,13 @@ const EventsManagement = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [filters, setFilters] = useState({
-    type: 'all',
+    eventType: 'all',
     status: 'upcoming',
-    myEvents: false
+    myEvents: false,
+    location: 'all',
+    search: '',
+    fromDate: '',
+    toDate: ''
   });
 
   // Load events data from Supabase
@@ -52,16 +58,38 @@ const EventsManagement = () => {
       let filteredData = data || [];
 
       // Apply filters
-      if (filters?.type !== 'all') {
-        filteredData = filteredData?.filter(event => event?.event_type === filters?.type);
+      if (filters?.eventType && filters?.eventType !== 'all') {
+        filteredData = filteredData?.filter(event => event?.event_type === filters?.eventType);
       }
 
-      if (filters?.status !== 'all') {
+      if (filters?.status && filters?.status !== 'all') {
         filteredData = filteredData?.filter(event => event?.status === filters?.status);
       }
 
       if (filters?.myEvents && user) {
         filteredData = filteredData?.filter(event => event?.organizer_id === user?.id);
+      }
+
+      if (filters?.location && filters?.location !== 'all') {
+        filteredData = filteredData?.filter(event => (event?.location || '')?.toLowerCase()?.includes(filters?.location?.toLowerCase()));
+      }
+
+      if (filters?.search) {
+        const query = filters?.search?.toLowerCase();
+        filteredData = filteredData?.filter(event =>
+          (event?.title || '')?.toLowerCase()?.includes(query) ||
+          (event?.description || '')?.toLowerCase()?.includes(query)
+        );
+      }
+
+      if (filters?.fromDate) {
+        filteredData = filteredData?.filter(event => new Date(event?.start_date || event?.date) >= new Date(filters?.fromDate));
+      }
+
+      if (filters?.toDate) {
+        const to = new Date(filters?.toDate);
+        to.setHours(23,59,59,999);
+        filteredData = filteredData?.filter(event => new Date(event?.start_date || event?.date) <= to);
       }
 
       setEvents(filteredData);
@@ -239,9 +267,16 @@ const EventsManagement = () => {
 
           <EventFilters
             filters={filters}
-            onFilterChange={setFilters}
             onFiltersChange={setFilters}
-            onClearFilters={() => setFilters({ type: 'all', status: 'upcoming', myEvents: false })}
+            onClearFilters={() => setFilters({
+              eventType: 'all',
+              status: 'upcoming',
+              myEvents: false,
+              location: 'all',
+              search: '',
+              fromDate: '',
+              toDate: ''
+            })}
             canCreateEvents={canCreateEvents}
           />
         </div>

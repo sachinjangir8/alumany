@@ -24,7 +24,7 @@ const Routes = () => {
         {/* Public routes */}
         <Route 
           path="/login" 
-          element={user ? <Navigate to="/alumni-dashboard" replace /> : <Login />} 
+          element={user ? <Navigate to="/events-management" replace /> : <Login />} 
         />
         
         {/* Protected routes */}
@@ -32,7 +32,7 @@ const Routes = () => {
           path="/" 
           element={
             <ProtectedRoute>
-              <Navigate to="/alumni-dashboard" replace />
+              <Navigate to="/events-management" replace />
             </ProtectedRoute>
           } 
         />
@@ -73,6 +73,14 @@ const Routes = () => {
           element={
             <ProtectedRoute>
               <CareerBoard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/events-management" 
+          element={
+            <ProtectedRoute>
+              <EventsManagement />
             </ProtectedRoute>
           } 
         />
