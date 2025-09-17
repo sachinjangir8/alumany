@@ -47,7 +47,7 @@ const EventCard = ({ event, onViewDetails, onEdit, onManageAttendees }) => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onViewDetails(event)}
+            onClick={() => onViewDetails(event?.id)}
             className="text-primary hover:text-primary"
           >
             <Icon name="Eye" size={16} />
@@ -55,7 +55,7 @@ const EventCard = ({ event, onViewDetails, onEdit, onManageAttendees }) => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onEdit(event)}
+            onClick={() => onEdit(event?.id)}
             className="text-secondary hover:text-secondary"
           >
             <Icon name="Edit" size={16} />
@@ -95,7 +95,7 @@ const EventCard = ({ event, onViewDetails, onEdit, onManageAttendees }) => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => onManageAttendees(event)}
+          onClick={() => onManageAttendees(event?.id)}
           className="ml-4"
         >
           Manage Attendees
