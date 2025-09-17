@@ -19,7 +19,7 @@ const Routes = () => {
   const { user } = useAuth();
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ErrorBoundary>
       <ScrollToTop />
       <Suspense fallback={<SplashScreen message="Loading..." />}> 
@@ -76,6 +76,14 @@ const Routes = () => {
           element={
             <ProtectedRoute>
               <CareerBoard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/events-management" 
+          element={
+            <ProtectedRoute>
+              <EventsManagement />
             </ProtectedRoute>
           } 
         />
