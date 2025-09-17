@@ -9,7 +9,23 @@ export default defineConfig({
   // comment this out if that isn't relevant for your project
   build: {
     outDir: "build",
-    chunkSizeWarningLimit: 2000,
+    chunkSizeWarningLimit: 1000,
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+          router: ["react-router-dom"],
+          supabase: ["@supabase/supabase-js"],
+          ui: ["lucide-react", "clsx", "class-variance-authority"],
+        },
+      },
+    },
+    // Use esbuild for minification and to drop console/debugger
+    minify: 'esbuild',
+  },
+  esbuild: {
+    drop: ["console", "debugger"],
   },
   plugins: [tsconfigPaths(), react(), tagger()],
   server: {
